@@ -1,13 +1,13 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-import tokin
+
 
 # Intents are required for receiving certain events
 intents = discord.Intents.all()
 intents.messages = True
 
-bot_tokin = tokin.tokin
+bot_tokin = 'Enter Your Tokin Here'
 
 # ALLOWED_SERVERS = [1307589213612539904, 1300450066728747020 , 1307586580998783016]  # Replace with your server IDs
 
