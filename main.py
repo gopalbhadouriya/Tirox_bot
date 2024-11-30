@@ -365,6 +365,50 @@ async def avatar(interaction: discord.Interaction, user: discord.Member = None):
     # Send the embed
     await interaction.response.send_message(embed=embed)
 
+# Slash command for warning
+@bot.tree.command(name="warn", description="Warn a user via DM")
+@app_commands.describe(member="The user to warn", reason="The reason for the warning")
+async def warn(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
+    if not interaction.user.guild_permissions.manage_messages:
+        embed = discord.Embed(
+            title="❌ Permission Denied",
+            description="You do not have permission to use this command.",
+            color=discord.Color.red()
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+
+    # DM Embed to the warned user
+    warn_embed = discord.Embed(
+        title="⚠️ Warning",
+        description=f"You have been warned in **{interaction.guild.name}**.",
+        color=discord.Color.blue()
+    )
+    warn_embed.add_field(name="Reason", value=reason, inline=False)
+    warn_embed.set_footer(text="Please adhere to the server rules to avoid further actions.")
+    
+    # Response Embed for admin
+    admin_embed = discord.Embed(
+        title="✅ User Warned",
+        description=f"{member.mention} has been warned.",
+        color=discord.Color.green()
+    )
+    admin_embed.add_field(name="Reason", value=reason, inline=False)
+    
+    try:
+        # Send DM to the warned user
+        await member.send(embed=warn_embed)
+        # Acknowledge the command with an embed to the admin
+        await interaction.response.send_message(embed=admin_embed)
+    except discord.Forbidden:
+        error_embed = discord.Embed(
+            title="⚠️ Warning Failed",
+            description=f"Could not send a DM to {member.mention}. They might have DMs disabled.",
+            color=discord.Color.red()
+        )
+        await interaction.response.send_message(embed=error_embed, ephemeral=True)
+
+
 
 
 
